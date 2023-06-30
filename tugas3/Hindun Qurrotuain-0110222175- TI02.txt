@@ -1,0 +1,76 @@
+Nama 	: HINDUN QURROTUAIN
+Nim  	: 0110222175
+Rombel 	: TI02 
+
+SOAL NO 1 Membuat Trigger
+
+	$$ A Trigger tambahiStok $$
+Query :
+
+DELIMITER //
+
+CREATE TRIGGER tambahiStok 
+AFTER INSERT ON suplai_produk 
+FOR EACH ROW
+BEGIN
+    UPDATE produk SET stok = stok + NEW.jumlah WHERE id = NEW.produk_id;
+END //
+		
+DELIMITER ;
+
+membuat trigger bernama tambahiStok yang akan diaktifkan setelah setiap operasi INSERT pada tabel suplai_produk. Trigger ini akan menambahkan nilai NEW.jumlah 
+ke stok produk yang sesuai dalam tabel produk berdasarkan nilai id yang terkait. 
+
+	$$ B membuat Trigger normalisasiStok $$
+Query :
+
+DELIMITER ))
+
+CREATE TRIGGER normalisasiStok 
+AFTER DELETE ON suplai_produk
+FOR EACH ROW
+BEGIN
+    UPDATE produk SET stok = stok - OLD.jumlah WHERE id = OLD.produk_id;
+END ))
+
+DELIMITER ; 
+
+membuat sebuah trigger dengan nama normalisasiStok. Trigger ini akan diaktifkan setelah terjadi operasi DELETE pada tabel suplai_produk. Ketika trigger diaktifkan, pernyataan UPDATE akan dieksekusi untuk mengurangi jumlah stok di tabel produk berdasarkan nilai jumlah yang terdapat pada baris yang dihapus (OLD.jumlah), serta id
+yang terkait dengan produk tersebut (OLD.produk_id). Setelah itu, pengaturan DELIMITER dikembalikan ke nilai semula (default).
+
+Soal No 2 Inner Join Suplai barang dengan detail yang lebih lengkap
+
+Query :
+
+SELECT suplai.tgl, produk.nama, jenis.nama, suplai.jumlah, suplier.nama
+FROM suplai_produk AS suplai
+INNER JOIN produk ON suplai.produk_id = produk.id
+INNER JOIN jenis ON produk.jenis_id = jenis.id
+INNER JOIN suplier ON suplai.suplier_id = suplier.id;
+
+Query tersebut menggabungkan tabel suplai_produk, produk, jenis, dan suplier menggunakan INNER JOIN berdasarkan relasi antara kolom-kolom yang sesuai. 
+Kolom-kolom yang ditampilkan adalah tgl dari tabel suplai_produk, nama dari tabel produk dan jenis, jumlah dari tabel suplai_produk, dan nama dari tabel suplier.
+
+Soal No 3 Buatlah user baru dengan izi akses user:
+   a. Roni izin akses hak penuh ke seluruh database dan tabel2 yang berada di dalamnya
+	Query:
+	GRANT ALL PRIVILEGES ON *.* TO roni@localhost
+	IDENTIFIED BY 'roni';
+	SHOW GRANTS FOR roni@localhost;
+
+   b. Desi izin akses hak ke database toko_online dan seluruh tabel yang berada di dalamnya
+	Query:
+	GRANT ALL PRIVILEGES ON toko_online.* TO desi@localhost IDENTIFIED BY 'desi';
+
+   c. Zaki izin aksesnya hanya bisa menginput dan select data dari tabel jenis dan produk
+	Query:
+	 GRANT INSERT, SELECT ON toko_online.jenis TO zaki@localhost IDENTIFIED BY 'zaki';
+
+Soal No 4 Mencabut hak akses
+   a. Zaki dicabut hak akses meninput datanya
+	Query:
+	REVOKE INSERT ON toko_online.produk FROM zaki@localhost;
+
+   b. Desi dicabut seluruh hak asksesnya
+	Query:
+	REVOKE ALL PRIVILEGES on *.* FROM desi@localhost;
